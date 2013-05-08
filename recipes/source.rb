@@ -40,7 +40,11 @@ end
 bash "install-erlang" do
   cwd Chef::Config[:file_cache_path]
   code <<-EOH
-    tar -xzf otp_src_#{node['erlang']['source']['version']}.tar.gz
+    if (file otp_src_#{node['erlang']['source']['version']}.tar.gz | grep 'gzip compressed data'); then
+      tar -xzf otp_src_#{node['erlang']['source']['version']}.tar.gz
+    else
+      tar -xf otp_src_#{node['erlang']['source']['version']}.tar.gz
+    fi
     (cd otp_src_#{node['erlang']['source']['version']} && ./configure && make && make install)
   EOH
   action :nothing
